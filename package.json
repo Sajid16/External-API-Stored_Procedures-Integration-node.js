@@ -1,0 +1,16 @@
+{
+  "name": "oracle_proc_integration",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start:dev": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Sajid Mahboob",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^0.23.0",
+    "oracledb": "^5.2.0"
+  }
+}
