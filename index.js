@@ -5,12 +5,13 @@ const dbConfig = {
     password: 'remit',
     connectString: '10.11.201.251:1521/stlbas'
 };
+const soapRequest = require('easy-soap-request');
 
 options = {
     // outFormat: oracledb.OUT_FORMAT_OBJECT // uncomment if you want object output instead of array
 };
 
-async function run() {
+async function procedureCall() {
     let connection;
 
     try {
@@ -55,8 +56,7 @@ async function run() {
         }
     }
 }
-
-run();
+//procedureCall();
 
 async function RIA() {
     try {
@@ -84,5 +84,49 @@ async function RIA() {
         console.log("API problem found: " + error);
     }
 }
+//RIA();
 
-RIA();
+
+// headers data of ictc
+const Agent_User_ID = "BD00002579";
+const Agent_Password = "DSD886";
+const Agent_Correspondent_ID = "BD0396";
+const ExhouseCode = "E41";
+let xmlResponse;
+
+// Example data
+const url = 'https://icuatapp.wallstreet.ae/IcIntegration/IcWebservice.asmx';
+const sampleHeaders = {
+    'Content-Type': 'text/xml;charset=UTF-8'
+};
+const xml = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:icws=\"ICWS\">" +
+    "<soapenv:Header>" +
+    "<icws:AuthHeader>" +
+    "<icws:Agent_UserID>" +
+    Agent_User_ID +
+    "</icws:Agent_UserID>" +
+    "<icws:User_Password>" +
+    Agent_Password +
+    "</icws:User_Password>" +
+    "<icws:Agent_CorrespondentID>" +
+    Agent_Correspondent_ID +
+    "</icws:Agent_CorrespondentID>" +
+    "</icws:AuthHeader>" +
+    "</soapenv:Header>" +
+    "<soapenv:Body>" +
+    "<icws:GetOutstandingRemittance/>" +
+    "</soapenv:Body>" +
+    "</soapenv:Envelope>";
+
+// usage of module
+(async () => {
+    const {
+        response
+    } = await soapRequest({
+        url: url,
+        headers: sampleHeaders,
+        xml: xml
+    });
+    xmlResponse = response.body;
+    console.log(typeof (response.body));
+})();
