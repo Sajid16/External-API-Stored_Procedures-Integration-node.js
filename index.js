@@ -6,6 +6,9 @@ const dbConfig = {
     connectString: '10.11.201.251:1521/stlbas'
 };
 const soapRequest = require('easy-soap-request');
+const xml2js = require('xml2js');
+// const node_xml_stream = require('node-xml-stream');
+// const parser = new node_xml_stream();
 
 options = {
     // outFormat: oracledb.OUT_FORMAT_OBJECT // uncomment if you want object output instead of array
@@ -86,6 +89,28 @@ async function RIA() {
 }
 //RIA();
 
+async function xmltest(xmlResponse) {
+    let jsonFormat;
+    xml2js.parseString(xmlResponse, (err, result) => {
+        if (err) {
+            throw err;
+        }
+
+        // `result` is a JavaScript object
+        // convert it to a JSON string
+        const json = JSON.stringify(result, null, 4);
+
+        // log JSON string
+        console.log(typeof (json));
+        // console.log(json.substring(1, 5));
+        // jsonFormat = JSON.parse(json);
+        jsonFormat = json;
+        // jsonFormat = json.substring(1, 5);
+
+    });
+
+    return jsonFormat;
+}
 
 // headers data of ictc
 const Agent_User_ID = "BD00002579";
@@ -119,6 +144,7 @@ const xml = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/e
     "</soapenv:Envelope>";
 
 // usage of module
+
 (async () => {
     const {
         response
@@ -126,7 +152,19 @@ const xml = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/e
         url: url,
         headers: sampleHeaders,
         xml: xml
-    });
+        // timeout: 1000
+    }); // Optional timeout parameter(milliseconds)
+    const {
+        headers,
+        body,
+        statusCode
+    } = response;
     xmlResponse = response.body;
-    console.log(typeof (response.body));
+    // test
+    const jsonResponse = await xmltest(xmlResponse);
+    console.log(jsonResponse);
+    // test
+    // console.log(headers);
+    // console.log(body);
+    // console.log(statusCode);
 })();
